@@ -13,8 +13,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String username;
 
