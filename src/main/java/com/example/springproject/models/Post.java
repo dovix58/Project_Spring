@@ -1,5 +1,6 @@
 package com.example.springproject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,14 +20,13 @@ public class Post {
 
     private String title;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
-//    private int likes;
-//
-//    private int dislikes;
+
 
 }
