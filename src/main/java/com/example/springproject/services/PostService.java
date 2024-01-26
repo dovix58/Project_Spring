@@ -14,7 +14,9 @@ public interface PostService {
 
     List<Post> findall();
 
-    Optional<User> findByid(Long id);
+    Optional<User> findUserById(Long id);
+
+    Optional<Post> findById(Long id);
 
     boolean isExists(Long id);
 }

@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -42,8 +40,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<User> findByid(Long id) {
+    public Optional<User> findUserById(Long id) {
         return userRepo.findById(id);
+    }
+
+    @Override
+    public Optional<Post> findById(Long id) {
+        return postRepo.findById(id);
     }
 
     @Override

@@ -1,30 +1,76 @@
 package com.example.springproject.controllers;
 
+import com.example.springproject.mappers.impl.PostMapper;
+import com.example.springproject.models.DTOs.PostDTO;
 import com.example.springproject.models.Post;
 import com.example.springproject.models.User;
 import com.example.springproject.services.PostService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/users/{userId}/posts")
 public class PostController {
     private final PostService postService;
+    private final PostMapper postMapper;
 
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostMapper postMapper) {
         this.postService = postService;
+        this.postMapper = postMapper;
     }
 
-    @PostMapping("/posts/{userId}")
-    public Post createPost(@RequestBody Post post,
+    @PostMapping()
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postdto,
                            @PathVariable Long userId){
-        Optional<User> byid = postService.findByid(userId);
-        User user = byid.orElse(null);
+        User user = postService.findUserById(userId).orElse(null);
+        if(user == null){
+            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Post post = postMapper.mapfrom(postdto);
         post.setAuthor(user);
-        return postService.createPost(post);
+        Post savedPost = postService.createPost(post);
+        return new ResponseEntity<>(postMapper.mapTo(savedPost), HttpStatus.CREATED) ;
+
+    }
+    @GetMapping
+    public List<PostDTO> listPosts(@PathVariable Long userId){
+        List<Post> posts = postService.findall();
+        return posts.stream()
+                .filter(x -> Objects.equals(x.getAuthor().getId(), userId))
+                .map(postMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostDTO> updatePost(@PathVariable Long postId, @RequestBody PostDTO postDTO){
+        if(!postService.isExists(postId)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Post postToUpdate = postService.findById(postId).orElse(null);
+        Post updatedPost = postMapper.mapfrom(postDTO);
+       postToUpdate.setTitle(updatedPost.getTitle());
+       postToUpdate.setPhotos(updatedPost.getPhotos());
+       postService.createPost(postToUpdate);
+
+        return new ResponseEntity<>(postMapper.mapTo(postToUpdate), HttpStatus.OK);
+
+
+
+    }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<PostDTO> deletePost(@PathVariable Long postId){
+        if(!postService.isExists(postId)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        postService.deletePost(postId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

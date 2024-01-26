@@ -2,9 +2,7 @@ package com.example.springproject.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.util.List;
@@ -23,5 +21,13 @@ public class User {
     private String username;
     @JsonManagedReference
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+    @Setter(AccessLevel.NONE) private List<Post> posts;
+
+    public void setPosts(List<Post> posts) {
+        if(posts != null){
+            this.posts.addAll(posts);
+        }
+
+
+    }
 }
