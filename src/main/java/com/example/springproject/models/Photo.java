@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -16,10 +17,19 @@ public class Photo {
     private Long id;
     private String name;
 
+    @Lob
+    byte[] content;
+
+    private String location;
+
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-
+    public Photo(String name, String location, Post post) {
+        this.name = name;
+        this.location = location;
+        this.post = post;
+    }
 }
