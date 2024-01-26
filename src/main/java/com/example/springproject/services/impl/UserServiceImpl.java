@@ -1,36 +1,37 @@
 package com.example.springproject.services.impl;
 
 import com.example.springproject.models.User;
-import com.example.springproject.repositories.UserRepository;
+import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepo userRepo;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
     @Override
     public User createUser(User user) {
-        return userRepository.save(user); 
+        return userRepo.save(user);
     }
 
     @Override
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        userRepo.deleteById(id);
     }
 
     @Override
     public List<User> findall() {
-        return StreamSupport.stream(userRepository
+        return StreamSupport.stream(userRepo
                 .findAll()
                 .spliterator(),
                 false)
@@ -38,7 +39,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findById(Long id) {
+        return userRepo.findById(id);
+    }
+
+    @Override
     public boolean isExist(Long id) {
-        return userRepository.existsById(id);
+        return userRepo.existsById(id);
     }
 }

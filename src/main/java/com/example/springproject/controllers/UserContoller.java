@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/users")
 public class UserContoller {
 
     private final UserService userService;
@@ -27,32 +28,35 @@ public class UserContoller {
         this.userMapper = userMapper;
     }
 
-    @PostMapping(path = "/users")
+    @PostMapping()
     public UserDTO createUser(@RequestBody UserDTO userDTO){
         User user = userMapper.mapfrom(userDTO);
         User savedUser = userService.createUser(user);
         return userMapper.mapTo(savedUser);
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<UserDTO> listUsers(){
         List<User> users = userService.findall();
         return users.stream()
                 .map(userMapper::mapTo)
                 .collect(Collectors.toList());
     }
-    @PutMapping("users/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
         if(!userService.isExist(id)){
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userDTO.setId(id);
-        User user = userMapper.mapfrom(userDTO);
-        User updatedUser = userService.createUser(user);
-        return new ResponseEntity<>(userMapper.mapTo(updatedUser), HttpStatus.OK);
+        User userToUpdate = userService.findById(id).orElse(null);
+        User updatedUser = userMapper.mapfrom(userDTO);
+        userToUpdate.setPosts(updatedUser.getPosts());
+        userToUpdate.setUsername(updatedUser.getUsername());
+        userService.createUser(userToUpdate);
+
+        return new ResponseEntity<>(userMapper.mapTo(userToUpdate), HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/users/{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<UserDTO> deleteUser(@PathVariable("id") Long id){
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
