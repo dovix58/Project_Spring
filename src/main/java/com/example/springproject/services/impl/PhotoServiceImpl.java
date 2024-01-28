@@ -12,23 +12,22 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
+    private final PhotoSystemRepo photoSystemRepo;
 
-    PhotoSystemRepo photoSystemRepo;
-
-    PhotoDbRepo photoDbRepo;
+    private final PhotoDbRepo photoDbRepo;
 
     public PhotoServiceImpl(PhotoSystemRepo photoSystemRepo, PhotoDbRepo photoDbRepo) {
         this.photoSystemRepo = photoSystemRepo;
         this.photoDbRepo = photoDbRepo;
     }
 
+//TODO naudot optionalus, nes geriau
+
 
     @Override
     public Long save(byte[] bytes, String imageName, Post post) throws Exception {
         String location = photoSystemRepo.save(bytes, imageName);
-
         return photoDbRepo.save(new Photo(imageName, location, post)).getId();
-
     }
 
     @Override
@@ -36,6 +35,18 @@ public class PhotoServiceImpl implements PhotoService {
         Photo photo = photoDbRepo.findById(imageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return photoSystemRepo.findInFileSystem(photo.getLocation());
+    }
+
+    @Override
+    public void delete(Long photoId) {
+        Photo photo = photoDbRepo.findById(photoId).orElse(null);
+
+        if(photo != null){
+            photoSystemRepo.deleteFromSystem(photo.getLocation());
+        }
+        photoDbRepo.deleteById(photoId);
+
+
     }
 
 }
