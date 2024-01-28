@@ -1,10 +1,8 @@
 package com.example.springproject.config;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ui.ModelMap;
 
 @Configuration
 public class MapperConfig {
@@ -13,3 +11,4 @@ public class MapperConfig {
         return new ModelMapper();
     }
 }
+
