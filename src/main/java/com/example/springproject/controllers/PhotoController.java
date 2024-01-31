@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/users/{userId}/posts/{postId}/photos")
 public class PhotoController {
@@ -29,11 +31,15 @@ public class PhotoController {
     }
 
     @PostMapping
-    public Long uploadPhoto(@RequestParam MultipartFile photo, @PathVariable Long postId) throws Exception{
-        //TODO paziuri ar useriui priklauso postas.
-        Post post = postService.findById(postId).orElse(null);
-        return photoService.save(photo.getBytes(), photo.getOriginalFilename(), post);
+    public ResponseEntity<Long> uploadPhoto(@RequestParam MultipartFile photo, @PathVariable Long postId, @PathVariable Long userId) throws Exception{
+
+            Optional<Post> post = postService.findById(postId);
+            if(post.isEmpty() || post.get().getAuthor().getId() != userId){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        return new ResponseEntity<>(photoService.save(photo.getBytes(), photo.getOriginalFilename(), post.get()), HttpStatus.CREATED);
     }
+
     @GetMapping("/{photoId}")
     public FileSystemResource getImage(@PathVariable Long photoId) throws Exception {
         return photoService.find(photoId);
