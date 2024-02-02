@@ -1,15 +1,19 @@
 package com.example.springproject.services.impl;
 
+import com.example.springproject.mappers.Requests.PostRequestMapper;
+import com.example.springproject.mappers.Responses.PostResponseMapper;
+import com.example.springproject.models.DTOs.Request.PostRequestDTO;
+import com.example.springproject.models.DTOs.Response.PostResponseDTO;
 import com.example.springproject.models.Post;
-import com.example.springproject.models.User;
 import com.example.springproject.repositories.PostRepo;
 import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.PostService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -23,9 +27,16 @@ public class PostServiceImpl implements PostService {
         this.userRepo = userRepo;
     }
 
+
     @Override
-    public Post createPost(Post post) {
-        return postRepo.save(post);
+    public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
+
+
+        if (!userRepo.existsById(userId)) {
+            return Optional.empty();
+        }
+        Post postToCreate = PostRequestMapper.INSTANCE.postRequestDTOToPost(postRequestDTO);
+        return Optional.of(PostResponseMapper.INSTANCE.postToPostResponseDTO(postRepo.save(postToCreate)));
     }
 
     @Override
@@ -34,23 +45,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findall() {
-        return new ArrayList<>(postRepo
-                .findAll());
+    public List<PostResponseDTO> getAll(Long userId) {
+        return postRepo
+                .findAll()
+                .stream()
+                .filter(x -> Objects.equals(x.getAuthor().getId(), userId))
+                .map(PostResponseMapper.INSTANCE::postToPostResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public Optional<User> findUserById(Long id) {
-        return userRepo.findById(id);
-    }
 
-    @Override
-    public Optional<Post> findById(Long id) {
-        return postRepo.findById(id);
-    }
 
-    @Override
-    public boolean isExists(Long id) {
-        return postRepo.existsById(id);
-    }
+
 }

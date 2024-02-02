@@ -1,4 +1,4 @@
-package com.example.springproject.models.DTOs;
+package com.example.springproject.models.DTOs.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +9,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserResponseDTO {
+
     private Long id;
 
     private String username;
 
-    private List<PostDTO> posts;
+    private List<PostResponseDTO> posts;
 }

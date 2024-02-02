@@ -1,5 +1,9 @@
 package com.example.springproject.services.impl;
 
+import com.example.springproject.mappers.Requests.UserMapper;
+import com.example.springproject.mappers.Responses.UserResponseMapper;
+import com.example.springproject.models.DTOs.Request.UserRequestDTO;
+import com.example.springproject.models.DTOs.Response.UserResponseDTO;
 import com.example.springproject.models.User;
 import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.UserService;
@@ -8,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,8 +23,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        return userRepo.save(user);
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+
+        User user = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
+        return UserResponseMapper.INSTANCE.userToResponseDTO(userRepo.save(user));
     }
 
     @Override
@@ -30,21 +35,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findall() {
-        return StreamSupport.stream(userRepo
+    public List<UserResponseDTO> getAll() {
+        return userRepo
                 .findAll()
-                .spliterator(),
-                false)
+                .stream()
+                .map(UserResponseMapper.INSTANCE::userToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepo.findById(id);
-    }
-
-    @Override
-    public boolean isExist(Long id) {
-        return userRepo.existsById(id);
+    public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
+        Optional<User> existingUser = userRepo.findById(id);
+        if(existingUser.isPresent()){
+            User userToUpdate = existingUser.get();
+            User requestUser = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
+            userToUpdate.setUsername(requestUser.getUsername());
+            userRepo.save(userToUpdate);
+            return Optional.of(UserResponseMapper.INSTANCE.userToResponseDTO(userToUpdate));
+        }
+        return Optional.empty();
     }
 }

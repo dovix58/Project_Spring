@@ -1,19 +1,21 @@
 package com.example.springproject.controllers;
 
-import com.example.springproject.mappers.impl.UserMapper;
-import com.example.springproject.models.DTOs.UserDTO;
-import com.example.springproject.models.User;
+import com.example.springproject.models.DTOs.Request.UserRequestDTO;
+import com.example.springproject.models.DTOs.Response.UserResponseDTO;
 import com.example.springproject.services.UserService;
-import com.example.springproject.services.impl.UserServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -21,43 +23,38 @@ public class UserContoller {
 
     private final UserService userService;
 
-    private final UserMapper userMapper;
-
-    public UserContoller(UserService userService, UserMapper userMapper) {
+    public UserContoller(UserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @PostMapping()
-    public UserDTO createUser(@RequestBody UserDTO userDTO){
-        User user = userMapper.mapfrom(userDTO);
-        User savedUser = userService.createUser(user);
-        return userMapper.mapTo(savedUser);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO){
+        return new ResponseEntity<>(userService.createUser(userRequestDTO), HttpStatus.CREATED);
     }
 
+    @PostMapping("/a")
+    public UserResponseDTO createUsera(@RequestBody UserRequestDTO userRequestDTO){
+        return userService.createUser(userRequestDTO);
+    }
+    int x(int x){
+        return x;
+    }
     @GetMapping()
-    public List<UserDTO> listUsers(){
-        List<User> users = userService.findall();
-        return users.stream()
-                .map(userMapper::mapTo)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<UserResponseDTO>> listUsers(){
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
-        if(!userService.isExist(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        User userToUpdate = userService.findById(id).orElse(null);
-        User updatedUser = userMapper.mapfrom(userDTO);
-        userToUpdate.setPosts(updatedUser.getPosts());
-        userToUpdate.setUsername(updatedUser.getUsername());
-        userService.createUser(userToUpdate);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO){
 
-        return new ResponseEntity<>(userMapper.mapTo(userToUpdate), HttpStatus.OK);
+        Optional<UserResponseDTO> updatedUser = userService.updateUser(id, userRequestDTO);
+        if(updatedUser.isPresent()){
+            return new ResponseEntity<>(updatedUser.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<UserDTO> deleteUser(@PathVariable("id") Long id){
+    public ResponseEntity<UserRequestDTO> deleteUser(@PathVariable("id") Long id){
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
