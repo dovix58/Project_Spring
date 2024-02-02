@@ -32,7 +32,7 @@ public class PostServiceImpl implements PostService {
     public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
 
 
-        if (!userRepo.existsById(userId)) {
+        if (!userRepo.findById(userId)) {
             return Optional.empty();
         }
         Post postToCreate = PostRequestMapper.INSTANCE.postRequestDTOToPost(postRequestDTO);
@@ -46,6 +46,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getAll(Long userId) {
+//        TODO find by user id o ne visus. pats sukurs.
         return postRepo
                 .findAll()
                 .stream()

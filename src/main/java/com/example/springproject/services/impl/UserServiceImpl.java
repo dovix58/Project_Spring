@@ -7,6 +7,7 @@ import com.example.springproject.models.DTOs.Response.UserResponseDTO;
 import com.example.springproject.models.User;
 import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,15 +19,20 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
-    public UserServiceImpl(UserRepo userRepo) {
+    private final UserMapper userMapper;
+
+    private final
+
+    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper) {
         this.userRepo = userRepo;
+        this.userMapper = userMapper;
     }
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
 
-        User user = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
-        return UserResponseMapper.INSTANCE.userToResponseDTO(userRepo.save(user));
+        User user = userMapper.userDTOToUser(userRequestDTO);
+        return userMapper.userToResponseDTO(userRepo.save(user));
     }
 
     @Override
@@ -45,14 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
-        Optional<User> existingUser = userRepo.findById(id);
-        if(existingUser.isPresent()){
-            User userToUpdate = existingUser.get();
-            User requestUser = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
-            userToUpdate.setUsername(requestUser.getUsername());
-            userRepo.save(userToUpdate);
-            return Optional.of(UserResponseMapper.INSTANCE.userToResponseDTO(userToUpdate));
-        }
-        return Optional.empty();
+        User user = userRepo.findById(id).orElseThrow(EntityNotFoundException::new);
+        User requestUser = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
+            user.setUsername(requestUser.getUsername());
+            userRepo.save(user);
+            return Optional.of(UserResponseMapper.INSTANCE.userToResponseDTO(user));
+
     }
 }

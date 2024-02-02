@@ -31,26 +31,14 @@ public class UserContoller {
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO){
         return new ResponseEntity<>(userService.createUser(userRequestDTO), HttpStatus.CREATED);
     }
-
-    @PostMapping("/a")
-    public UserResponseDTO createUsera(@RequestBody UserRequestDTO userRequestDTO){
-        return userService.createUser(userRequestDTO);
-    }
-    int x(int x){
-        return x;
-    }
     @GetMapping()
-    public ResponseEntity<List<UserResponseDTO>> listUsers(){
-        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+    public List<UserResponseDTO> listUsers(){
+        return userService.getAll();
     }
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO){
-
         Optional<UserResponseDTO> updatedUser = userService.updateUser(id, userRequestDTO);
-        if(updatedUser.isPresent()){
-            return new ResponseEntity<>(updatedUser.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return updatedUser.map(userResponseDTO -> new ResponseEntity<>(userResponseDTO, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(path = "/{id}")

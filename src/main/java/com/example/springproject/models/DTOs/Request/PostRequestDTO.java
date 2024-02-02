@@ -7,6 +7,7 @@ import java.util.List;
 public class PostRequestDTO {
 
     private String title;
+//    TODO ISIDETI  i entity created date ir last updated date.
 
     private Long userID;
 

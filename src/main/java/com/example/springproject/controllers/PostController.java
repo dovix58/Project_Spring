@@ -41,6 +41,7 @@ public class PostController {
     }
     @GetMapping
     public List<PostResponseDTO> listPosts(@PathVariable Long userId){
+
         return postService.getAll(userId);
     }
 //TODO pasiuziuret, siunciat postDTO ir ida gali siust.
