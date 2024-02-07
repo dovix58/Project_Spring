@@ -12,7 +12,6 @@ public interface PostService {
 
     void deletePost(Long id);
 
-    List<PostResponseDTO> getAll(Long userId);
 
-
+    List<PostResponseDTO> getPostsByUser(Long userId);
 }

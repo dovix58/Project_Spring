@@ -21,19 +21,22 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    private final
+    private final UserResponseMapper userResponseMapper;
 
-    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper) {
+
+    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper, UserResponseMapper userResponseMapper) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
+        this.userResponseMapper = userResponseMapper;
     }
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
 
         User user = userMapper.userDTOToUser(userRequestDTO);
-        return userMapper.userToResponseDTO(userRepo.save(user));
+        return userResponseMapper.userToResponseDTO(userRepo.save(user));
     }
+
 
     @Override
     public void deleteUser(Long id) {
@@ -52,7 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
         User user = userRepo.findById(id).orElseThrow(EntityNotFoundException::new);
-        User requestUser = UserMapper.INSTANCE.userDTOToUser(userRequestDTO);
+        User requestUser = UserMapper.userDTOToUser(userRequestDTO);
             user.setUsername(requestUser.getUsername());
             userRepo.save(user);
             return Optional.of(UserResponseMapper.INSTANCE.userToResponseDTO(user));

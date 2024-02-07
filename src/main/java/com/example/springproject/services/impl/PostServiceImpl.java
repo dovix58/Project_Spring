@@ -11,7 +11,6 @@ import com.example.springproject.services.PostService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,11 +21,13 @@ public class PostServiceImpl implements PostService {
 
     private final UserRepo userRepo;
 
-    public PostServiceImpl(PostRepo postRepo, UserRepo userRepo) {
+    private final PostResponseMapper postResponseMapper;
+
+    public PostServiceImpl(PostRepo postRepo, UserRepo userRepo, PostResponseMapper postResponseMapper) {
         this.postRepo = postRepo;
         this.userRepo = userRepo;
+        this.postResponseMapper = postResponseMapper;
     }
-
 
     @Override
     public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
@@ -44,14 +45,15 @@ public class PostServiceImpl implements PostService {
         postRepo.deleteById(id);
     }
 
+
+
     @Override
-    public List<PostResponseDTO> getAll(Long userId) {
+    public List<PostResponseDTO> getPostsByUser(Long userId) {
 //        TODO find by user id o ne visus. pats sukurs.
-        return postRepo
-                .findAll()
+
+        return postRepo.getPostByAuthor_Id(userId)
                 .stream()
-                .filter(x -> Objects.equals(x.getAuthor().getId(), userId))
-                .map(PostResponseMapper.INSTANCE::postToPostResponseDTO)
+                .map(postResponseMapper::postToPostResponseDTO)
                 .collect(Collectors.toList());
     }
 
