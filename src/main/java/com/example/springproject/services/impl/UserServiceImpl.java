@@ -48,17 +48,17 @@ public class UserServiceImpl implements UserService {
         return userRepo
                 .findAll()
                 .stream()
-                .map(UserResponseMapper.INSTANCE::userToResponseDTO)
+                .map(userResponseMapper::userToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
         User user = userRepo.findById(id).orElseThrow(EntityNotFoundException::new);
-        User requestUser = UserMapper.userDTOToUser(userRequestDTO);
+        User requestUser = userMapper.userDTOToUser(userRequestDTO);
             user.setUsername(requestUser.getUsername());
             userRepo.save(user);
-            return Optional.of(UserResponseMapper.INSTANCE.userToResponseDTO(user));
+            return Optional.of(userResponseMapper.userToResponseDTO(user));
 
     }
 }
