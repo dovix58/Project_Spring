@@ -10,6 +10,8 @@ import com.example.springproject.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
 
         User user = userMapper.userDTOToUser(userRequestDTO);
+        user.setDateCreated(LocalDateTime.now(ZoneOffset.UTC));
         return userResponseMapper.userToResponseDTO(userRepo.save(user));
     }
 

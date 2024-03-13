@@ -19,11 +19,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-public class UserContoller {
+public class UserController {
 
     private final UserService userService;
 
-    public UserContoller(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -35,15 +35,15 @@ public class UserContoller {
     public List<UserResponseDTO> listUsers(){
         return userService.getAll();
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO){
+    public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO){
         Optional<UserResponseDTO> updatedUser = userService.updateUser(id, userRequestDTO);
-        return updatedUser.map(userResponseDTO -> new ResponseEntity<>(userResponseDTO, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return updatedUser.orElseThrow();
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<UserRequestDTO> deleteUser(@PathVariable("id") Long id){
+    public void deleteUser(@PathVariable("id") Long id){
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
