@@ -7,5 +7,5 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostResponseMapper {
-    PostResponseDTO postToPostResponseDTO(Post Post);
+    PostResponseDTO postToPostResponseDTO(Post post);
 }

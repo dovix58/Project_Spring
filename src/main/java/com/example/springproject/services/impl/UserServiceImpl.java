@@ -1,6 +1,6 @@
 package com.example.springproject.services.impl;
 
-import com.example.springproject.mappers.Requests.UserMapper;
+import com.example.springproject.mappers.Requests.UserRequestMapper;
 import com.example.springproject.mappers.Responses.UserResponseMapper;
 import com.example.springproject.models.DTOs.Request.UserRequestDTO;
 import com.example.springproject.models.DTOs.Response.UserResponseDTO;
@@ -21,21 +21,21 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
-    private final UserMapper userMapper;
+    private final UserRequestMapper userRequestMapper;
 
     private final UserResponseMapper userResponseMapper;
 
 
-    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper, UserResponseMapper userResponseMapper) {
+    public UserServiceImpl(UserRepo userRepo, UserRequestMapper userRequestMapper, UserResponseMapper userResponseMapper) {
         this.userRepo = userRepo;
-        this.userMapper = userMapper;
+        this.userRequestMapper = userRequestMapper;
         this.userResponseMapper = userResponseMapper;
     }
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
 
-        User user = userMapper.userDTOToUser(userRequestDTO);
+        User user = userRequestMapper.userDTOToUser(userRequestDTO);
         user.setDateCreated(LocalDateTime.now(ZoneOffset.UTC));
         return userResponseMapper.userToResponseDTO(userRepo.save(user));
     }
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
         User user = userRepo.findById(id).orElseThrow(EntityNotFoundException::new);
-        User requestUser = userMapper.userDTOToUser(userRequestDTO);
+        User requestUser = userRequestMapper.userDTOToUser(userRequestDTO);
             user.setUsername(requestUser.getUsername());
             userRepo.save(user);
             return Optional.of(userResponseMapper.userToResponseDTO(user));

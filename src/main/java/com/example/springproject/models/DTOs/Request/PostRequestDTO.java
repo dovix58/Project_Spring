@@ -1,15 +1,16 @@
 package com.example.springproject.models.DTOs.Request;
 
-import com.example.springproject.models.Photo;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostRequestDTO {
 
     private String title;
 //    TODO ISIDETI  i entity created date ir last updated date.
 
-    private Long userID;
 
-    private List<Photo> photos;
 }

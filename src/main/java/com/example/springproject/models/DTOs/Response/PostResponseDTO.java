@@ -15,7 +15,7 @@ public class PostResponseDTO {
 
     private String title;
 
-    private Long userID;
+    private Long authorId;
 
     private List<PhotoDTO> photos;
 }
