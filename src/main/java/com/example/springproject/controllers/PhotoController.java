@@ -1,6 +1,5 @@
 package com.example.springproject.controllers;
 
-import com.example.springproject.models.DTOs.PostDTO;
 import com.example.springproject.models.Post;
 import com.example.springproject.services.PhotoService;
 import com.example.springproject.services.PostService;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -34,7 +34,7 @@ public class PhotoController {
     public ResponseEntity<Long> uploadPhoto(@RequestParam MultipartFile photo, @PathVariable Long postId, @PathVariable Long userId) throws Exception{
 
             Optional<Post> post = postService.findById(postId);
-            if(post.isEmpty() || post.get().getAuthor().getId() != userId){
+            if(post.isEmpty() || !Objects.equals(post.get().getAuthor().getId(), userId)){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         return new ResponseEntity<>(photoService.save(photo.getBytes(), photo.getOriginalFilename(), post.get()), HttpStatus.CREATED);
@@ -45,8 +45,7 @@ public class PhotoController {
         return photoService.find(photoId);
     }
     @DeleteMapping("/{photoId}")
-    public ResponseEntity<PostDTO> deletePhoto(@PathVariable Long photoId) {
+    public void deletePhoto(@PathVariable Long photoId) {
         photoService.delete(photoId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,15 +1,18 @@
 package com.example.springproject.services.impl;
 
+import com.example.springproject.mappers.Requests.PostRequestMapper;
+import com.example.springproject.mappers.Responses.PostResponseMapper;
+import com.example.springproject.models.DTOs.Request.PostRequestDTO;
+import com.example.springproject.models.DTOs.Response.PostResponseDTO;
 import com.example.springproject.models.Post;
-import com.example.springproject.models.User;
 import com.example.springproject.repositories.PostRepo;
 import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.PostService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -18,14 +21,22 @@ public class PostServiceImpl implements PostService {
 
     private final UserRepo userRepo;
 
-    public PostServiceImpl(PostRepo postRepo, UserRepo userRepo) {
+    private final PostResponseMapper postResponseMapper;
+
+    private final PostRequestMapper postRequestMapper;
+
+    public PostServiceImpl(PostRepo postRepo, UserRepo userRepo, PostResponseMapper postResponseMapper, PostRequestMapper postRequestMapper) {
         this.postRepo = postRepo;
         this.userRepo = userRepo;
+        this.postResponseMapper = postResponseMapper;
+        this.postRequestMapper = postRequestMapper;
     }
 
     @Override
-    public Post createPost(Post post) {
-        return postRepo.save(post);
+    public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
+        Post postToCreate = postRequestMapper.postRequestDTOToPost(postRequestDTO);
+        postToCreate.setAuthor(userRepo.findById(userId).orElseThrow());
+        return Optional.of(postResponseMapper.postToPostResponseDTO(postRepo.save(postToCreate)));
     }
 
     @Override
@@ -33,24 +44,33 @@ public class PostServiceImpl implements PostService {
         postRepo.deleteById(id);
     }
 
+
+
     @Override
-    public List<Post> findall() {
-        return new ArrayList<>(postRepo
-                .findAll());
+    public List<PostResponseDTO> getPostsByUser(Long userId) {
+        return postRepo.getPostByAuthor_Id(userId)
+                .stream()
+                .map(postResponseMapper::postToPostResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<User> findUserById(Long id) {
-        return userRepo.findById(id);
+    public Optional<Post> findById(Long postId) {
+        return postRepo.findById(postId);
     }
 
     @Override
-    public Optional<Post> findById(Long id) {
-        return postRepo.findById(id);
+    public boolean isExists(Long postId) {
+        return postRepo.existsById(postId);
     }
 
     @Override
-    public boolean isExists(Long id) {
-        return postRepo.existsById(id);
+    public PostResponseDTO updatePost(Long postId, PostRequestDTO postRequestDTO) {
+        var postToUpdate = findById(postId).orElseThrow();
+        postToUpdate.setTitle(postRequestDTO.getTitle());
+        postRepo.save(postToUpdate);
+        return postResponseMapper.postToPostResponseDTO(postToUpdate);
     }
+
+
 }

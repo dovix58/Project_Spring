@@ -1,22 +1,24 @@
 package com.example.springproject.services;
 
+import com.example.springproject.models.DTOs.Request.PostRequestDTO;
+import com.example.springproject.models.DTOs.Response.PostResponseDTO;
 import com.example.springproject.models.Post;
-import com.example.springproject.models.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
 
-    Post createPost(Post post);
+    Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId);
 
     void deletePost(Long id);
 
-    List<Post> findall();
 
-    Optional<User> findUserById(Long id);
+    List<PostResponseDTO> getPostsByUser(Long userId);
 
-    Optional<Post> findById(Long id);
+    Optional<Post> findById(Long postId);
 
-    boolean isExists(Long id);
+    boolean isExists(Long postId);
+
+    PostResponseDTO updatePost(Long postId, PostRequestDTO postRequestDTO);
 }

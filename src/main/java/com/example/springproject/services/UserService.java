@@ -1,20 +1,18 @@
 package com.example.springproject.services;
 
-import com.example.springproject.models.DTOs.UserDTO;
-import com.example.springproject.models.User;
-import org.springframework.stereotype.Component;
+import com.example.springproject.models.DTOs.Request.UserRequestDTO;
+import com.example.springproject.models.DTOs.Response.UserResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    User createUser(User user);
+    UserResponseDTO createUser(UserRequestDTO user);
 
     void deleteUser(Long id);
 
-    List<User> findall();
+    List<UserResponseDTO> getAll();
 
-    Optional<User> findById(Long id);
 
-    boolean isExist(Long id);
+    Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO);
 }

@@ -1,5 +1,6 @@
 package com.example.springproject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Photo {
 
     private String location;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
     private Post post;
