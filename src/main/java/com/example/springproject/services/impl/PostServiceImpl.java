@@ -36,9 +36,7 @@ public class PostServiceImpl implements PostService {
     public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
         Post postToCreate = postRequestMapper.postRequestDTOToPost(postRequestDTO);
         postToCreate.setAuthor(userRepo.findById(userId).orElseThrow());
-        var postResponseDTO = postResponseMapper.postToPostResponseDTO(postRepo.save(postToCreate));
-        postResponseDTO.setAuthorId(userId);
-        return Optional.of(postResponseDTO);
+        return Optional.of(postResponseMapper.postToPostResponseDTO(postRepo.save(postToCreate)));
     }
 
     @Override
@@ -50,15 +48,29 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getPostsByUser(Long userId) {
-//        TODO find by user id o ne visus. pats sukurs.
-
         return postRepo.getPostByAuthor_Id(userId)
                 .stream()
                 .map(postResponseMapper::postToPostResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Optional<Post> findById(Long postId) {
+        return postRepo.findById(postId);
+    }
 
+    @Override
+    public boolean isExists(Long postId) {
+        return postRepo.existsById(postId);
+    }
+
+    @Override
+    public PostResponseDTO updatePost(Long postId, PostRequestDTO postRequestDTO) {
+        var postToUpdate = findById(postId).orElseThrow();
+        postToUpdate.setTitle(postRequestDTO.getTitle());
+        postRepo.save(postToUpdate);
+        return postResponseMapper.postToPostResponseDTO(postToUpdate);
+    }
 
 
 }
