@@ -2,8 +2,9 @@ package com.example.springproject.models.DTOs.Response;
 
 import com.example.springproject.models.Photo;
 import com.example.springproject.models.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,8 @@ public class PostResponseDTO {
 
     private String title;
 
-    @JsonBackReference
+    @JsonIgnoreProperties({"posts"})
     private User author;
 
-    @JsonManagedReference
     private List<Photo> photos;
 }

@@ -38,19 +38,6 @@ public class PostController {
     }
     @PutMapping("/{postId}")
     public PostResponseDTO updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO postRequestDTO){
-//        if(!postService.isExists(postId)){
-//             throw new ResponseStatusException(
-//                    HttpStatus.NOT_FOUND, "post not found"
-//            );
-//        }
-//
-//        var postToUpdate = postService.findById(postId);
-//        var updatedPost = postMapper.mapfrom(postResponseDTO);
-//       postToUpdate.setTitle(updatedPost.getTitle());
-//       postToUpdate.setPhotos(updatedPost.getPhotos());
-//       postService.createPost(postToUpdate);
-//
-//        return postMapper.mapTo(postToUpdate);
 
         return postService.updatePost(postId, postRequestDTO);
 
