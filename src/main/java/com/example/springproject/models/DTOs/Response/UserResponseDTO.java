@@ -17,6 +17,4 @@ public class UserResponseDTO {
 
     private String username;
 
-    @JsonIgnore
-    private List<PostResponseDTO> posts;
 }

@@ -19,8 +19,6 @@ public class PostResponseDTO {
 
     private String title;
 
-    @JsonIgnoreProperties({"posts"})
-    private User author;
+    private String author;
 
-    private List<Photo> photos;
 }
