@@ -1,7 +1,7 @@
 package com.example.springproject.controllers;
 
-import com.example.springproject.models.DTOs.Request.UserRequestDTO;
-import com.example.springproject.models.DTOs.Response.UserResponseDTO;
+import com.example.springproject.models.DTOs.Request.UserRequest;
+import com.example.springproject.models.DTOs.Response.UserResponse;
 import com.example.springproject.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +28,17 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO){
-        return new ResponseEntity<>(userService.createUser(userRequestDTO), HttpStatus.CREATED);
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest){
+        return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
     }
     @GetMapping()
-    public List<UserResponseDTO> listUsers(){
+    public List<UserResponse> listUsers(){
         return userService.getAll();
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO){
-        Optional<UserResponseDTO> updatedUser = userService.updateUser(id, userRequestDTO);
+    public UserResponse updateUser(@PathVariable Long id, @RequestBody UserRequest userRequest){
+        Optional<UserResponse> updatedUser = userService.updateUser(id, userRequest);
         return updatedUser.orElseThrow();
     }
 

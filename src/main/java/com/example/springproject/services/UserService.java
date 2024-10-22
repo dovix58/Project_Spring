@@ -1,18 +1,18 @@
 package com.example.springproject.services;
 
-import com.example.springproject.models.DTOs.Request.UserRequestDTO;
-import com.example.springproject.models.DTOs.Response.UserResponseDTO;
+import com.example.springproject.models.DTOs.Request.UserRequest;
+import com.example.springproject.models.DTOs.Response.UserResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    UserResponseDTO createUser(UserRequestDTO user);
+    UserResponse createUser(UserRequest user);
 
     void deleteUser(Long id);
 
-    List<UserResponseDTO> getAll();
+    List<UserResponse> getAll();
 
 
-    Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO);
+    Optional<UserResponse> updateUser(Long id, UserRequest userRequest);
 }

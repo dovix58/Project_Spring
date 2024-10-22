@@ -5,6 +5,7 @@ import com.example.springproject.services.PhotoService;
 import com.example.springproject.services.PostService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -41,8 +44,24 @@ public class PhotoController {
     }
 
     @GetMapping("/{photoId}")
-    public FileSystemResource getImage(@PathVariable Long photoId) throws Exception {
-        return photoService.find(photoId);
+    public ResponseEntity<FileSystemResource> getImage(@PathVariable Long photoId) {
+        try {
+            FileSystemResource image = photoService.find(photoId);
+            if (!image.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(image.getFile().toPath());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(image);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping()
+    public ResponseEntity<List<FileSystemResource>> getAllPhotos(@PathVariable Long postId){
+
     }
     @DeleteMapping("/{photoId}")
     public void deletePhoto(@PathVariable Long photoId) {

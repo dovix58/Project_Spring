@@ -1,8 +1,8 @@
 package com.example.springproject.controllers;
 
 
-import com.example.springproject.models.DTOs.Request.PostRequestDTO;
-import com.example.springproject.models.DTOs.Response.PostResponseDTO;
+import com.example.springproject.models.DTOs.Request.PostRequest;
+import com.example.springproject.models.DTOs.Response.PostResponse;
 import com.example.springproject.services.PostService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,19 +27,19 @@ public class PostController {
 
 
     @PostMapping()
-    public PostResponseDTO createPost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long userId){
-        var post = postService.createPost(postRequestDTO, userId);
+    public PostResponse createPost(@RequestBody PostRequest postRequest, @PathVariable Long userId){
+        var post = postService.createPost(postRequest, userId);
         return post.orElseThrow();
     }
     @GetMapping
-    public List<PostResponseDTO> listPosts(@PathVariable Long userId){
+    public List<PostResponse> listPosts(@PathVariable Long userId){
 
         return postService.getPostsByUser(userId);
     }
     @PutMapping("/{postId}")
-    public PostResponseDTO updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO postRequestDTO){
+    public PostResponse updatePost(@PathVariable Long postId, @RequestBody PostRequest postRequest){
 
-        return postService.updatePost(postId, postRequestDTO);
+        return postService.updatePost(postId, postRequest);
 
     }
     @DeleteMapping("/{postId}")

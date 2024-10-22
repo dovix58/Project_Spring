@@ -2,8 +2,8 @@ package com.example.springproject.services.impl;
 
 import com.example.springproject.mappers.Requests.UserRequestMapper;
 import com.example.springproject.mappers.Responses.UserResponseMapper;
-import com.example.springproject.models.DTOs.Request.UserRequestDTO;
-import com.example.springproject.models.DTOs.Response.UserResponseDTO;
+import com.example.springproject.models.DTOs.Request.UserRequest;
+import com.example.springproject.models.DTOs.Response.UserResponse;
 import com.example.springproject.models.User;
 import com.example.springproject.repositories.UserRepo;
 import com.example.springproject.services.UserService;
@@ -33,9 +33,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponse createUser(UserRequest userRequest) {
 
-        User user = userRequestMapper.userDTOToUser(userRequestDTO);
+        User user = userRequestMapper.userDTOToUser(userRequest);
         user.setDateCreated(LocalDateTime.now(ZoneOffset.UTC));
         return userResponseMapper.userToResponseDTO(userRepo.save(user));
     }
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> getAll() {
+    public List<UserResponse> getAll() {
         return userRepo
                 .findAll()
                 .stream()
@@ -56,9 +56,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
+    public Optional<UserResponse> updateUser(Long id, UserRequest userRequest) {
         User user = userRepo.findById(id).orElseThrow(EntityNotFoundException::new);
-        User requestUser = userRequestMapper.userDTOToUser(userRequestDTO);
+        User requestUser = userRequestMapper.userDTOToUser(userRequest);
             user.setUsername(requestUser.getUsername());
             userRepo.save(user);
             return Optional.of(userResponseMapper.userToResponseDTO(user));

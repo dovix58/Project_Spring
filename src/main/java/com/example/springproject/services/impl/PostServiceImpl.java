@@ -2,8 +2,8 @@ package com.example.springproject.services.impl;
 
 import com.example.springproject.mappers.Requests.PostRequestMapper;
 import com.example.springproject.mappers.Responses.PostResponseMapper;
-import com.example.springproject.models.DTOs.Request.PostRequestDTO;
-import com.example.springproject.models.DTOs.Response.PostResponseDTO;
+import com.example.springproject.models.DTOs.Request.PostRequest;
+import com.example.springproject.models.DTOs.Response.PostResponse;
 import com.example.springproject.models.Post;
 import com.example.springproject.repositories.PostRepo;
 import com.example.springproject.repositories.UserRepo;
@@ -33,8 +33,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<PostResponseDTO> createPost(PostRequestDTO postRequestDTO, Long userId) {
-        Post postToCreate = postRequestMapper.postRequestDTOToPost(postRequestDTO);
+    public Optional<PostResponse> createPost(PostRequest postRequest, Long userId) {
+        Post postToCreate = postRequestMapper.postRequestDTOToPost(postRequest);
         postToCreate.setAuthor(userRepo.findById(userId).orElseThrow());
         return Optional.of(postResponseMapper.postToPostResponseDTO(postRepo.save(postToCreate)));
     }
@@ -47,7 +47,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public List<PostResponseDTO> getPostsByUser(Long userId) {
+    public List<PostResponse> getPostsByUser(Long userId) {
         return postRepo.getPostByAuthor_Id(userId)
                 .stream()
                 .map(postResponseMapper::postToPostResponseDTO)
@@ -65,9 +65,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponseDTO updatePost(Long postId, PostRequestDTO postRequestDTO) {
+    public PostResponse updatePost(Long postId, PostRequest postRequest) {
         var postToUpdate = findById(postId).orElseThrow();
-        postToUpdate.setTitle(postRequestDTO.getTitle());
+        postToUpdate.setTitle(postRequest.getTitle());
         postRepo.save(postToUpdate);
         return postResponseMapper.postToPostResponseDTO(postToUpdate);
     }

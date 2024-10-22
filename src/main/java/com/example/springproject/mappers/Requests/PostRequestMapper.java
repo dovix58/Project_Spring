@@ -1,6 +1,6 @@
 package com.example.springproject.mappers.Requests;
 
-import com.example.springproject.models.DTOs.Request.PostRequestDTO;
+import com.example.springproject.models.DTOs.Request.PostRequest;
 import com.example.springproject.models.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -9,5 +9,5 @@ import org.mapstruct.MappingConstants;
 
 public interface PostRequestMapper {
 
-    Post postRequestDTOToPost(PostRequestDTO postRequestDTO);
+    Post postRequestDTOToPost(PostRequest postRequest);
 }

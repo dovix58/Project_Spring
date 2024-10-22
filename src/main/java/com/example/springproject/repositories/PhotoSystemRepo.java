@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public class PhotoSystemRepo {
@@ -29,6 +30,13 @@ public class PhotoSystemRepo {
             return new FileSystemResource(Paths.get(location));
         } catch (Exception e) {
             // Handle access or file not found problems.
+            throw new RuntimeException();
+        }
+    }
+    public List<FileSystemResource> findAllInFileSystem(List<String> locations){
+        try {
+            //TODO padaryt for each kiekvienam locationui pamint ta systemresourse det i lista ir paskiau persiust.
+        }catch (Exception e) {
             throw new RuntimeException();
         }
     }

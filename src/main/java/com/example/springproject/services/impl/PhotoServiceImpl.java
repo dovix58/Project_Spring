@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class PhotoServiceImpl implements PhotoService {
     private final PhotoSystemRepo photoSystemRepo;
@@ -35,6 +37,12 @@ public class PhotoServiceImpl implements PhotoService {
         Photo photo = photoDbRepo.findById(imageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return photoSystemRepo.findInFileSystem(photo.getLocation());
+    }
+
+    @Override
+    public List<FileSystemResource> findAllPhotos(Long postId) {
+        List<Photo> photos = photoDbRepo.getPhotosByPost_Id(postId);
+
     }
 
     @Override

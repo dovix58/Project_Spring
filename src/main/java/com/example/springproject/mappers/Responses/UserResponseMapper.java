@@ -1,6 +1,6 @@
 package com.example.springproject.mappers.Responses;
 
-import com.example.springproject.models.DTOs.Response.UserResponseDTO;
+import com.example.springproject.models.DTOs.Response.UserResponse;
 import com.example.springproject.models.User;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -13,6 +13,6 @@ public interface UserResponseMapper {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "user.id") // Map the id field
     @Mapping(target = "username", source = "user.username") // Map the id field
-    UserResponseDTO userToResponseDTO(User user);
+    UserResponse userToResponseDTO(User user);
 
 }
