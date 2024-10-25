@@ -59,12 +59,21 @@ public class PhotoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+//    @GetMapping()
+//    public ResponseEntity<List<FileSystemResource>> getAllPhotos(@PathVariable Long postId){
+//
+//
+//    }
     @GetMapping()
-    public ResponseEntity<List<FileSystemResource>> getAllPhotos(@PathVariable Long postId){
-
+    public ResponseEntity
+    @GetMapping()
+    public ResponseEntity<List<Long>> getAllPhotoIds(@PathVariable Long postId){
+        return ResponseEntity.ok(photoService.findPhotoIdsByPost(postId));
     }
+
     @DeleteMapping("/{photoId}")
     public void deletePhoto(@PathVariable Long photoId) {
         photoService.delete(photoId);
     }
 }
+//TODO gauna dabar ids, tada padaryt kad siustiu requesta jau su tuo id kad gaut name ir thumbnail ir tada dar viena kad gaut pacia foto.

@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,8 +35,12 @@ public class PhotoSystemRepo {
         }
     }
     public List<FileSystemResource> findAllInFileSystem(List<String> locations){
+        List<FileSystemResource> list = new ArrayList<>();
         try {
-            //TODO padaryt for each kiekvienam locationui pamint ta systemresourse det i lista ir paskiau persiust.
+            for (String location: locations){
+                list.add(new FileSystemResource(Paths.get(location)));
+            }
+            return list;
         }catch (Exception e) {
             throw new RuntimeException();
         }
