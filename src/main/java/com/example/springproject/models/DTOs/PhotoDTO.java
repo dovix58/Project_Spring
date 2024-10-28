@@ -1,7 +1,7 @@
 package com.example.springproject.models.DTOs;
 
 
-import com.example.springproject.models.DTOs.Response.PostResponseDTO;
+import com.example.springproject.models.DTOs.Response.PostResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class PhotoDTO {
     private String name;
 
     @JsonIgnore
-    private PostResponseDTO post;
+    private PostResponse post;
 }

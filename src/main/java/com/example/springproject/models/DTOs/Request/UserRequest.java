@@ -5,12 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDTO {
+@NoArgsConstructor
+public class UserRequest {
 
-    private String title;
-//    TODO ISIDETI  i entity created date ir last updated date.
-
+    private String username;
 
 }

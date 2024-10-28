@@ -1,5 +1,6 @@
 package com.example.springproject.services.impl;
 
+import com.example.springproject.models.DTOs.Response.PhotoThumbnail;
 import com.example.springproject.models.Photo;
 import com.example.springproject.models.Post;
 import com.example.springproject.repositories.PhotoDbRepo;
@@ -9,6 +10,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -37,6 +40,12 @@ public class PhotoServiceImpl implements PhotoService {
         return photoSystemRepo.findInFileSystem(photo.getLocation());
     }
 
+//    @Override
+//    public List<FileSystemResource> findAllPhotos(Long postId) {
+//        List<Photo> photos = photoDbRepo.getPhotosByPost_Id(postId);
+//
+//    }
+
     @Override
     public void delete(Long photoId) {
         Photo photo = photoDbRepo.findById(photoId).orElse(null);
@@ -47,6 +56,16 @@ public class PhotoServiceImpl implements PhotoService {
         photoDbRepo.deleteById(photoId);
 
 
+    }
+
+    @Override
+    public List<Long> findPhotoIdsByPost(Long postId) {
+        return photoDbRepo.findPhotoIdsByPost(postId);
+    }
+
+    @Override
+    public PhotoThumbnail getPhotoThumbnail(Long photoId) {
+        Photo photo = photoDbRepo.findById(photoId);
     }
 
 }
