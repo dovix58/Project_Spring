@@ -6,11 +6,17 @@ import com.example.springproject.models.Post;
 import com.example.springproject.repositories.PhotoDbRepo;
 import com.example.springproject.repositories.PhotoSystemRepo;
 import com.example.springproject.services.PhotoService;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -64,8 +70,26 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PhotoThumbnail getPhotoThumbnail(Long photoId) {
-        Photo photo = photoDbRepo.findById(photoId);
+    public PhotoThumbnail getPhotoThumbnail(Long photoId) throws IOException {
+        var photo = photoDbRepo.findById(photoId).orElseThrow();
+        var resource = photoSystemRepo.findInFileSystem(photo.getLocation());
+
+        PhotoThumbnail photoThumbnail = new PhotoThumbnail();
+        photoThumbnail.setId(photo.getId());
+        photoThumbnail.setName(photo.getName());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Thumbnails.of(resource.getFile())  // Use the file found in the filesystem
+                    .size(640, 480)            // Set desired thumbnail size
+                    .outputFormat("jpg")
+                    .outputQuality(0.6)// Set format to jpg
+                    .toOutputStream(baos);     // Write thumbnail image data to ByteArrayOutputStream
+
+            byte[] thumbnailBytes = baos.toByteArray(); // Convert output stream to byte array
+            photoThumbnail.setBytes(thumbnailBytes);    // Set the byte array in PhotoThumbnail
+        }
+
+        return photoThumbnail;
     }
 
 }

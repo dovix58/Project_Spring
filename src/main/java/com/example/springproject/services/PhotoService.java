@@ -4,6 +4,7 @@ import com.example.springproject.models.DTOs.Response.PhotoThumbnail;
 import com.example.springproject.models.Post;
 import org.springframework.core.io.FileSystemResource;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PhotoService {
@@ -17,5 +18,5 @@ public interface PhotoService {
 
     List<Long> findPhotoIdsByPost(Long postId);
 
-    PhotoThumbnail getPhotoThumbnail(Long photoId);
+    PhotoThumbnail getPhotoThumbnail(Long photoId) throws IOException;
 }

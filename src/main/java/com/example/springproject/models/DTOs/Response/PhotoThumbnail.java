@@ -12,5 +12,5 @@ public class PhotoThumbnail {
     private Long id;
     private String name;
 
-    private Byte[] bytes;
+    private byte[] bytes;
 }

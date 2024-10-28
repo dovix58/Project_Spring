@@ -1,5 +1,6 @@
 package com.example.springproject.controllers;
 
+import com.example.springproject.models.DTOs.Response.PhotoThumbnail;
 import com.example.springproject.models.Post;
 import com.example.springproject.services.PhotoService;
 import com.example.springproject.services.PostService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +45,7 @@ public class PhotoController {
         return new ResponseEntity<>(photoService.save(photo.getBytes(), photo.getOriginalFilename(), post.get()), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{photoId}")
+    @GetMapping("/{photoId}/image")
     public ResponseEntity<FileSystemResource> getImage(@PathVariable Long photoId) {
         try {
             FileSystemResource image = photoService.find(photoId);
@@ -64,8 +66,10 @@ public class PhotoController {
 //
 //
 //    }
-    @GetMapping()
-    public ResponseEntity
+    @GetMapping("/{photoId}/thumbnail")
+    public ResponseEntity<PhotoThumbnail> getThumbnail(@PathVariable Long photoId) throws IOException {
+        return ResponseEntity.ok(photoService.getPhotoThumbnail(photoId));
+    }
     @GetMapping()
     public ResponseEntity<List<Long>> getAllPhotoIds(@PathVariable Long postId){
         return ResponseEntity.ok(photoService.findPhotoIdsByPost(postId));
