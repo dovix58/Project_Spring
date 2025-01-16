@@ -12,6 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,14 +29,22 @@ public class Photo {
 
     private String location;
 
+    private String description;
+
+    private LocalDate date;
+
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
     private Post post;
 
-    public Photo(String name, String location, Post post) {
+    public Photo(String name, String location, String description, LocalDate date, Post post) {
         this.name = name;
         this.location = location;
+        this.description = description;
+        this.date = date;
         this.post = post;
     }
+
+
 }

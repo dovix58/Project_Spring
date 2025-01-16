@@ -1,23 +1,25 @@
 package com.example.springproject.services.impl;
 
+import com.example.springproject.mappers.Requests.PhotoRequestMapper;
+import com.example.springproject.models.DTOs.Request.PhotoRequest;
 import com.example.springproject.models.DTOs.Response.PhotoThumbnail;
 import com.example.springproject.models.Photo;
 import com.example.springproject.models.Post;
 import com.example.springproject.repositories.PhotoDbRepo;
 import com.example.springproject.repositories.PhotoSystemRepo;
 import com.example.springproject.services.PhotoService;
+import com.example.springproject.services.PostService;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.name.Rename;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -25,25 +27,39 @@ public class PhotoServiceImpl implements PhotoService {
 
     private final PhotoDbRepo photoDbRepo;
 
-    public PhotoServiceImpl(PhotoSystemRepo photoSystemRepo, PhotoDbRepo photoDbRepo) {
+    private final PhotoRequestMapper photoRequestMapper;
+
+    private final PostService postService;
+
+    public PhotoServiceImpl(PhotoSystemRepo photoSystemRepo, PhotoDbRepo photoDbRepo, PhotoRequestMapper photoRequestMapper, PostService postService) {
         this.photoSystemRepo = photoSystemRepo;
         this.photoDbRepo = photoDbRepo;
+        this.photoRequestMapper = photoRequestMapper;
+        this.postService = postService;
     }
 
 //TODO naudot optionalus, nes geriau
 
 
     @Override
-    public Long save(byte[] bytes, String imageName, Post post) throws Exception {
-        String location = photoSystemRepo.save(bytes, imageName);
-        return photoDbRepo.save(new Photo(imageName, location, post)).getId();
+    public Photo uploadPhoto(PhotoRequest photoRequest, Long postId, Long userId) throws Exception {
+        Photo photo = photoRequestMapper.photoRequestDTOToPhoto(photoRequest);
+        Optional<Post> post = postService.findById(postId);
+        if(post.isEmpty() || !Objects.equals(post.get().getAuthor().getId(), userId)){
+           throw new IllegalArgumentException();
+        }
+
+        String location = photoSystemRepo.save(photoRequest.getBytes(), photo.getName());
+
+        return photoDbRepo.save(new Photo(photo.getName(), location, photo.getLocation(), photo.getDate(), post.get()));
     }
 
     @Override
-    public FileSystemResource find(Long imageId) {
-        Photo photo = photoDbRepo.findById(imageId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return photoSystemRepo.findInFileSystem(photo.getLocation());
+    public Optional<FileSystemResource> find(Long imageId) {
+         return photoDbRepo.findById(imageId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .map((photo1) -> photoSystemRepo.findInFileSystem(photo1.getLocation()));
+
     }
 
 //    @Override
@@ -80,9 +96,9 @@ public class PhotoServiceImpl implements PhotoService {
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Thumbnails.of(resource.getFile())  // Use the file found in the filesystem
-                    .size(640, 480)            // Set desired thumbnail size
+                    .size(20, 50)           //TODO properties
                     .outputFormat("jpg")
-                    .outputQuality(0.6)// Set format to jpg
+                    .outputQuality(0.6)
                     .toOutputStream(baos);     // Write thumbnail image data to ByteArrayOutputStream
 
             byte[] thumbnailBytes = baos.toByteArray(); // Convert output stream to byte array

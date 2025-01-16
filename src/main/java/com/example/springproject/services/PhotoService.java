@@ -1,16 +1,20 @@
 package com.example.springproject.services;
 
+import com.example.springproject.models.DTOs.Request.PhotoRequest;
 import com.example.springproject.models.DTOs.Response.PhotoThumbnail;
+import com.example.springproject.models.Photo;
 import com.example.springproject.models.Post;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface PhotoService {
-    Long save(byte[] bytes, String imageName, Post post) throws Exception;
+    Photo uploadPhoto(PhotoRequest photoRequest, Long postId, Long userId) throws Exception;
 
-    FileSystemResource find(Long imageId);
+    Optional<FileSystemResource> find(Long imageId);
 
 //    List<FileSystemResource> findAllPhotos(Long imageId);
 
